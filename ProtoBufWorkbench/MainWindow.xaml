@@ -46,6 +46,9 @@
                     <RadioButton x:Name="HexOption" Content="Hex" Margin="5,0,0,0" IsChecked="True" ToolTip="Shows the binary-encoded message in a Hex editor"/>
                     <RadioButton x:Name="CSharpOption" Content="C#" Margin="5,0,0,0" ToolTip="Shows the binary-encoded message as a C# byte array"/>
                 </StackPanel>
+                <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="5">
+                    <Button Content="Paste" ToolTip="Paste from Binary as Text (must start with the 0x identifier)" Command="{Binding PasteFromBinaryText}"/>
+                </StackPanel>
                 <Grid>
                     <my:HexEditor  HorizontalAlignment="Stretch" x:Name="MessageBinary" HexBytes="{Binding MessageBinary}" VerticalAlignment="Stretch" Visibility="{Binding ElementName=HexOption, Path=IsChecked, Converter={StaticResource BooleanToVisibilityConverter}}"/>
                     <TextBox  HorizontalAlignment="Stretch" x:Name="MessageBinaryCSharp" Text="{Binding MessageBinaryCSharp, Mode=OneWay}" VerticalAlignment="Stretch" Visibility="{Binding ElementName=CSharpOption, Path=IsChecked, Converter={StaticResource BooleanToVisibilityConverter}}" IsReadOnly="True" TextWrapping="Wrap" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto"/>

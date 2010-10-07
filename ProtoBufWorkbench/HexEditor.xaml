@@ -7,7 +7,7 @@
     <Grid>
         <WindowsFormsHost Name="windowsFormsHost1" >
             <WindowsFormsHost.Child>
-                <Forms:HexBox x:Name="_hexBox"/>
+                <Forms:HexBox x:Name="_hexBox" VScrollBarVisible="True"/>
             </WindowsFormsHost.Child>
         </WindowsFormsHost>
     </Grid>

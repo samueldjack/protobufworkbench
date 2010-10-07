@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Windows;
 using System.Windows.Input;
 using ProtoBufWorkbench.Framework;
 using ProtoBufWorkbench.Properties;
@@ -24,6 +26,7 @@ namespace ProtoBufWorkbench
         private string _rootMessageName;
         private ActionInvokingCommand _decodeCommand;
         private ObservableCollection<string> _availableMessageTypes = new ObservableCollection<string>();
+        private ActionInvokingCommand _pasteFromBinary;
 
         public MainWindowViewModel()
         {
@@ -174,6 +177,18 @@ namespace ProtoBufWorkbench
             }
         }
 
+        public ICommand PasteFromBinaryText
+        {
+            get
+            {
+                if (_pasteFromBinary == null)
+                {
+                    _pasteFromBinary = new ActionInvokingCommand(DoPasteFromBinaryText);
+                }
+                return _pasteFromBinary;
+            }
+        }
+
         private void DoEncodeMessage()
         {
             var task = new EncodeTask()
@@ -200,6 +215,35 @@ namespace ProtoBufWorkbench
             var result = _compiler.Decode(task);
             MessageText = result.DecodedMessage;
             Errors = result.CompilerOutput;
+        }
+
+        private void DoPasteFromBinaryText()
+        {
+            if (!Clipboard.ContainsText(TextDataFormat.Text))
+            {
+                return;
+            }
+
+            var text = Clipboard.GetText();
+            if (!text.StartsWith("0x"))
+            {
+                return;
+            }
+
+            var textMinusHeader = text.Substring(2, text.Length - 2);
+            var bytes = SplitStringIntoCharacterPairs(textMinusHeader)
+                .Select(bytesString => byte.Parse(bytesString, NumberStyles.HexNumber))
+                .ToArray();
+
+            MessageBinary = bytes;
+        }
+
+        private IEnumerable<string> SplitStringIntoCharacterPairs(string value)
+        {
+            for (var i = 0; i < value.Length; i+= 2)
+            {
+                yield return value.Substring(i, 2);
+            }
         }
     }
 }
